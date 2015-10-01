@@ -30,7 +30,8 @@ module.exports = function (grunt) {
         tasks: ['jst']
       },
       styles: {
-        files: ['less/**/*.less']
+        files: ['less/**/*.less'],
+        tasks: ['less']
       }
     }
   });

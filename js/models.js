@@ -7,6 +7,12 @@ function loadLeaderBoardData() {
 var UserProfile = Backbone.Model.extend({
   defaults: {
     username: 'user'
+  },
+  initialize: function () {
+    this.loggedIn = false;
+  },
+  isLoggedIn: function () {
+    return this.loggedIn;
   }
 });
 

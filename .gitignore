@@ -14,8 +14,6 @@ pids
 logs
 results
 tmp
-/js/templates.js
-css
 
 npm-debug.log
 node_modules
