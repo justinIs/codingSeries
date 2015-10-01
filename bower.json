@@ -14,5 +14,10 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "backbone": "~1.2.3",
+    "backbone.marionette": "marionette#~2.4.3",
+    "requirejs": "~2.1.20"
+  }
 }

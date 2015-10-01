@@ -13,19 +13,24 @@ module.exports = function (grunt) {
           }
         },
         files: {
-          "public/js/templates.js": "public/templates/**/*.html"
+          "js/templates.js": "templates/**/*.html"
         }
       }
     },
     less: {
       compile: {
-
+        files: {
+          "css/index.css": "less/main.less"
+        }
       }
     },
     watch: {
       templates: {
-        files: ['public/templates/**/*.html'],
+        files: ['templates/**/*.html'],
         tasks: ['jst']
+      },
+      styles: {
+        files: ['less/**/*.less']
       }
     }
   });
