@@ -1,0 +1,62 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title <%=questionStatus%>"><%=title + ' - ' + id%></h4>
+    </div>
+    <div class="modal-body">
+      <div class="container-fluid">
+        <div class="row heading">
+          Description
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <%=description%>
+          </div>
+        </div>
+        <div class="row heading">
+          Input
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <%=input%>
+          </div>
+        </div>
+        <div class="row heading">
+          Output
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <%=output%>
+          </div>
+        </div>
+        <div class="row heading">
+          Submission Instructions
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <p>Disrupt jean shorts viral hella meh, plaid cupidatat magna art party. Echo Park adipisicing literally narwhal. Williamsburg leggings church-key, craft beer forage cornhole jean shorts blue bottle pariatur. Officia sapiente bespoke, locavore plaid cray voluptate deep v ex vinyl tote bag chillwave swag occaecat. Sed banh mi 3 wolf moon single-origin coffee quis tempor. </p>
+            <p class="bold">TLDR:</p>
+            <p>1. Upload your your code as <span class="bold">Q<%=id%>.[ext]</span> and output file as <span class="bold">Q<%=id%>.out</span></p>
+            <p>b) ???</p>
+            <p>III: Profit</p>
+          </div>
+        </div>
+        <div class="row heading errors">
+          Submission Errors
+        </div>
+        <div class="row">
+          <div id="errorMessages" class="col-lg-12">
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn nope" data-dismiss="modal" aria-hidden="true">Nope</a>
+      <a href="#" class="btn submit btn-primary">Submit Answer</a>
+      <input type="button" id="dismissModal" data-dismiss="modal" aria-hidden="true">
+      <input type="file" multiple id="fileinput">
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
