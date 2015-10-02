@@ -38,8 +38,7 @@ var Question = Backbone.Model.extend({
     }
   },
   isCorrect: function () {
-    //this.set('questionStatus', 'incorrect');
-    return false;
+    return this.model.get('questionStatus') === 'correct';
   },
   sourceFileSubmitted: function () {
     return !!this.get('sourceFile')
