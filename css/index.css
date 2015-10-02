@@ -8778,6 +8778,18 @@ fieldset[disabled] .btn-yahoo.active {
   text-transform: uppercase;
   transition: all 0.2s linear;
 }
+.please-log-in,
+#username,
+#password {
+  padding: 13px;
+}
+#username,
+#password {
+  margin: 0 10px;
+}
+#submitLogin {
+  margin: 8px;
+}
 .credz #please-log-in input {
   padding: 13px;
   margin-right: 10px;

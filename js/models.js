@@ -1,15 +1,22 @@
-var userProfile;
-function loadLeaderBoardData() {
-  userProfile = new UserProfile();
-  //return $.when(easyQuestions.fetch(), mediumQuestions.fetch(), hardQuestions.fetch());
-}
-
 var UserProfile = Backbone.Model.extend({
   defaults: {
     username: 'user'
   },
   initialize: function () {
+    var userInfo = Cookies.getJSON('userInfo');
+    this.loggedIn = false;
+    if (userInfo) {
+      this.set('username', userInfo.username);
+      this.set('password', userInfo.password);
+      this.loggedIn = true;
+    }
+  },
+  loginSuccess: function (credentials) {
+    Cookies.set('userInfo', credentials, { expires: 1, path: '/' });
+    this.set('username', credentials.username);
+    this.set('password', credentials.password);
     this.loggedIn = true;
+    window.location.reload();
   },
   isLoggedIn: function () {
     return this.loggedIn;
@@ -18,8 +25,7 @@ var UserProfile = Backbone.Model.extend({
     return this.get('username');
   }
 });
-
-userProfile = new UserProfile();
+var userProfile = new UserProfile();
 
 var Question = Backbone.Model.extend({
   initialize: function () {

@@ -23,10 +23,12 @@ var LogInView = Marionette.ItemView.extend({
   el: '#loginView',
   ui: {
     username: '#username',
-    password: '#password'
+    password: '#password',
+    submit: '#submitLogin'
   },
   events: {
-    'keyup input': 'handleKeyup'
+    'keyup input': 'handleKeyup',
+    'click #submitLogin': 'submitLogin'
   },
   handleKeyup: function (e) {
     if (e.keyCode === 13) {
@@ -35,11 +37,16 @@ var LogInView = Marionette.ItemView.extend({
   },
   submitLogin: function () {
     var username = this.ui.username.val(), password = this.ui.password.val();
-    if ((username && username.length > 0) && (password && password.length())) {
-      $.post('/sessions', {
+    if ((username && username.length > 0) && (password && password.length)) {
+      var userInfo = {
         username: username,
         password: password
-      });
+      };
+      //$.post('http://www.codingseries.xyz/api/index.php/sessions', userInfo).then(function (response) {
+      //  if (response.status === 'success') {
+          userProfile.loginSuccess(userInfo);
+      //  }
+      //});
     } else {
       alert('please enter a username and/or password');
     }
