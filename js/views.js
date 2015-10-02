@@ -7,7 +7,42 @@ var AppView = Marionette.LayoutView.extend({
   },
   onRender: function () {
     $('#application').append(this.el);
-    this.showChildView('questions', new QuestionSetView());
+    if (userProfile.isLoggedIn()) {
+      this.showChildView('questions', new QuestionSetView());
+      var $loginul = $('#loginView').find('ul');
+      $loginul.empty();
+      $('#userTitle').text(userProfile.username());
+    } else {
+      new LogInView().render();
+    }
+  }
+});
+
+var LogInView = Marionette.ItemView.extend({
+  template: false,
+  el: '#loginView',
+  ui: {
+    username: '#username',
+    password: '#password'
+  },
+  events: {
+    'keyup input': 'handleKeyup'
+  },
+  handleKeyup: function (e) {
+    if (e.keyCode === 13) {
+      this.submitLogin();
+    }
+  },
+  submitLogin: function () {
+    var username = this.ui.username.val(), password = this.ui.password.val();
+    if ((username && username.length > 0) && (password && password.length())) {
+      $.post('/sessions', {
+        username: username,
+        password: password
+      });
+    } else {
+      alert('please enter a username and/or password');
+    }
   }
 });
 
@@ -22,6 +57,9 @@ var QuestionSetView = Marionette.LayoutView.extend({
     easyQuestions: '#easyQuestions',
     mediumQuestions: '#mediumQuestions',
     hardQuestions: '#hardQuestions'
+  },
+  initialize: function () {
+    this.listenTo(userProfile, 'questions-loaded', this.render);
   },
   onRender: function () {
     this.showChildView('easyQuestions', new QuestionsView({collection: easyQuestions,

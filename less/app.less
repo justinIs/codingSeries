@@ -1,6 +1,7 @@
 @border-color: #eee;
 
 .credz {
+    #please-log-in
     input {
         padding: 13px;
         margin-right: 10px;
@@ -81,7 +82,6 @@
         color: green;
         content: '\2713';
         position: absolute;
-        top: 0;
     }
     &.incorrect:after {
         padding-left: 5px;
@@ -89,8 +89,11 @@
         color: red;
         content: 'X';
         position: absolute;
-        top: 0;
     }
+}
+
+.question .title:after {
+    top: 0;
 }
 
 .missing-files {
@@ -123,4 +126,9 @@
 
 .bold {
     font-weight: bold;
+}
+
+.modal-body {
+    max-height: 650px;
+    overflow: auto;
 }

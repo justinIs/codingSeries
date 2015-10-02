@@ -9,10 +9,13 @@ var UserProfile = Backbone.Model.extend({
     username: 'user'
   },
   initialize: function () {
-    this.loggedIn = false;
+    this.loggedIn = true;
   },
   isLoggedIn: function () {
     return this.loggedIn;
+  },
+  username: function () {
+    return this.get('username');
   }
 });
 
@@ -50,12 +53,12 @@ var Questions = Backbone.Collection.extend({
   model: Question,
   totalUnanswered: function () {
     return _.reduce(this.models, function (memo, model) {
-      return memo - (model.get('questionStatus')==='correct' ? 1 : 0);
+      return memo - (model.get('questionStatus') === 'correct' ? 1 : 0);
     }, this.models.length);
   },
   score: function () {
     return _.reduce(this.models, function (memo, model) {
-      return memo + (model.get('questionStatus')==='correct' ? model.get('points'):0);
+      return memo + (model.get('questionStatus') === 'correct' ? Number(model.get('points')) : 0);
     }, 0);
   },
   questionManager: function (difficulty) {
@@ -70,159 +73,35 @@ var Questions = Backbone.Collection.extend({
   }
 });
 
-//var allQuestions = $.get('http://justinpaulin.com/demos/dev/codingchamps/api/index.php/challenges');
-//var allAttempts = $.get('http://justinpaulin.com/demos/dev/codingchamps/api/index.php/attempts');
+var allQuestions = $.get('http://159.203.3.189/api/index.php/challenges');
+var allAttempts = $.get('http://159.203.3.189/api/index.php/attempts');
+//var allAttempts = $.get('http://159.203.3.189/api/index.php/attempts/user/'+userProfile.username());
 
 var easyQuestions = new Questions();
 var mediumQuestions = new Questions();
 var hardQuestions = new Questions();
-var attempts = [
-  {
-    "id": 1,
-    "time": "2015-09-30 04:02:35",
-    "user": 12,
-    "challenge": 1,
-    "code": "NULL",
-    "output": "NULL",
-    "points": 0
-  },
-  {
-    "id": 2,
-    "time": "2015-09-30 04:03:17",
-    "user": 12,
-    "challenge": 2,
-    "code": "",
-    "output": "",
-    "points": 3
-  },
-  {
-    "id": 3,
-    "time": "2015-09-30 04:03:17",
-    "user": 12,
-    "challenge": 3,
-    "code": "",
-    "output": "",
-    "points": 9
-  }
-];
-var challenges = [
-  {
-    "id": 1,
-    "points": 1,
-    "title": "Question 1Question 1Question 1Question 1Question 1Question 1Question 1Question 1Question 1Question 1Question 1Question 1Question 1Question 1Question 1",
-    "description": "Do things",
-    "input": "12341234",
-    "output": "4321"
-  },
-  {
-    "id": 2,
-    "points": 3,
-    "title": "Question 2",
-    "description": "Do things2",
-    "input": "asdfasdfasdf",
-    "output": "fdsa"
-  },
-  {
-    "id": 3,
-    "points": 9,
-    "title": "Question 3",
-    "description": "Do things3",
-    "input": "abcdabcdabcd",
-    "output": "dcba"
-  },
-  {
-    "id": 4,
-    "points": 3,
-    "title": "12",
-    "description": "One more time",
-    "input": "We're gona celebrate",
-    "output": ""
-  },
-  {
-    "id": 5,
-    "points": 1,
-    "title": "Question 1",
-    "description": "Do things",
-    "input": "12341234",
-    "output": "4321"
-  },
-  {
-    "id": 6,
-    "points": 3,
-    "title": "Question 2",
-    "description": "Do things2",
-    "input": "asdfasdfasdf",
-    "output": "fdsa"
-  },
-  {
-    "id": 7,
-    "points": 9,
-    "title": "Question 3",
-    "description": "Do things3",
-    "input": "abcdabcdabcd",
-    "output": "dcba"
-  },
-  {
-    "id": 8,
-    "points": 3,
-    "title": "12",
-    "description": "One more time",
-    "input": "We're gona celebrate",
-    "output": ""
-  },
-  {
-    "id": 9,
-    "points": 1,
-    "title": "Question 1",
-    "description": "Do things",
-    "input": "12341234",
-    "output": "4321"
-  },
-  {
-    "id": 10,
-    "points": 3,
-    "title": "Question 2",
-    "description": "Do things2",
-    "input": "asdfasdfasdf",
-    "output": "fdsa"
-  },
-  {
-    "id": 11,
-    "points": 9,
-    "title": "Question 3",
-    "description": "Do things3",
-    "input": "abcdabcdabcd",
-    "output": "dcba"
-  },
-  {
-    "id": 12,
-    "points": 9,
-    "title": "New One",
-    "description": "One more time",
-    "input": "We're gona celebrate",
-    "output": ""
-  }
-];
 
-_.forEach(challenges, function (challenge) {
-  var question = new Question(challenge);
-  var currentAttempt = _.find(attempts, function (attempt) {
-    return attempt.challenge == challenge.id;
-  });
-  if (currentAttempt) {
-    question.set('questionStatus', currentAttempt.points == question.get('points') ? 'correct':'incorrect');
-  } else {
-    question.set('questionStatus', 'unanswered');
+$.when(allQuestions, allAttempts).done(function (questionsResponse, attemptsResponse) {
+  if (questionsResponse[1] === 'success' && attemptsResponse[1] === 'success' && questionsResponse[0].error === undefined) {
+    questionsResponse[0].forEach(function (rawQuestion) {
+      var question = new Question(rawQuestion);
+      if (attemptsResponse[0].error === undefined) {
+        var currentAttempt = _.find(attemptsResponse[0], function (attempt) {
+          return attempt.challenge == rawQuestion.id;
+        });
+        if (currentAttempt) {
+          question.set('questionStatus', currentAttempt.points == question.get('points') ? 'correct' : 'incorrect');
+        } else {
+          question.set('questionStatus', 'unanswered');
+        }
+      }
+      if (question.get('points') == 1)
+        easyQuestions.add(question);
+      else if (question.get('points') == 3)
+        mediumQuestions.add(question);
+      else
+        hardQuestions.add(question);
+    });
+    userProfile.trigger('questions-loaded');
   }
-
-  if (question.get('points') == 1)
-    easyQuestions.add(question);
-  else if (question.get('points') == 3)
-    mediumQuestions.add(question);
-  else
-    hardQuestions.add(question);
 });
-
-//$.when(allQuestions, allAttempts).done(function (questions, attempts) {
-//  debugger;
-//});

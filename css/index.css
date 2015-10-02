@@ -8778,7 +8778,7 @@ fieldset[disabled] .btn-yahoo.active {
   text-transform: uppercase;
   transition: all 0.2s linear;
 }
-.credz input {
+.credz #please-log-in input {
   padding: 13px;
   margin-right: 10px;
 }
@@ -8842,7 +8842,6 @@ fieldset[disabled] .btn-yahoo.active {
   color: green;
   content: '\2713';
   position: absolute;
-  top: 0;
 }
 .question .title.incorrect:after,
 .modal-title.incorrect:after {
@@ -8851,6 +8850,8 @@ fieldset[disabled] .btn-yahoo.active {
   color: red;
   content: 'X';
   position: absolute;
+}
+.question .title:after {
   top: 0;
 }
 .missing-files {
@@ -8880,6 +8881,10 @@ fieldset[disabled] .btn-yahoo.active {
 }
 .bold {
   font-weight: bold;
+}
+.modal-body {
+  max-height: 650px;
+  overflow: auto;
 }
 html {
   position: relative;
