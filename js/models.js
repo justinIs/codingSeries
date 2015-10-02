@@ -72,8 +72,8 @@ var Questions = Backbone.Collection.extend({
   }
 });
 
-var allQuestions = $.get('http://159.203.3.189/api/index.php/challenges');
-var allAttempts = $.get('http://159.203.3.189/api/index.php/attempts');
+var allQuestions = $.get('http://www.codingseries.xyz/api/index.php/challenges');
+var allAttempts = $.get('http://www.codingseries.xyz/api/index.php/attempts');
 //var allAttempts = $.get('http://159.203.3.189/api/index.php/attempts/user/'+userProfile.username());
 
 var easyQuestions = new Questions();
