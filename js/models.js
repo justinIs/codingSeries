@@ -13,7 +13,6 @@ var UserProfile = Backbone.Model.extend({
     this.set('username', credentials.username);
     this.set('password', credentials.password);
     this.set('id', credentials.id);
-    credentials.id = credentials.id;
     Cookies.set('userInfo', credentials, {expires: 1, path: '/'});
     this.loggedIn = true;
     window.location.reload();
