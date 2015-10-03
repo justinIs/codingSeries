@@ -8831,6 +8831,7 @@ fieldset[disabled] .btn-yahoo.active {
 }
 .question-set .question {
   transition: background-color 0.3s, color 0.3s;
+  margin: 15px;
 }
 .question-set .question:hover {
   transition: background-color 0.3s, color 0.3s;
@@ -8866,6 +8867,9 @@ fieldset[disabled] .btn-yahoo.active {
   color: red;
   content: 'X';
   position: absolute;
+}
+.question .title:after {
+  right: 2px;
 }
 .question .title:after {
   top: 0;

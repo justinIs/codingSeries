@@ -152,7 +152,7 @@ var QuestionModal = Marionette.ItemView.extend({
 });
 
 var QuestionView = Marionette.ItemView.extend({
-  className: 'question col-sm-3',
+  className: 'question col-sm-2',
   template: util.template('question'),
   events: {
     'click': 'showQuestion'
