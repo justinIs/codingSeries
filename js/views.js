@@ -18,11 +18,33 @@ var AppView = Marionette.LayoutView.extend({
       $('#userTitle').text(userProfile.username());
       $('#logout').click(this.logout);
     } else {
+      $('#createAccount').click(function () {
+        new CreateAccountModal().render();
+      });
       new LogInView().render();
     }
   },
   logout: function () {
     userProfile.logout();
+  }
+});
+
+var CreateAccountModal = Marionette.ItemView.extend({
+  className: 'modal fade',
+  template: util.template('signup-modal'),
+  ui: {
+
+  },
+  show: function() {
+    this.$el.modal('show');
+  },
+  teardown: function() {
+    this.ui.dismissModal.click();
+  },
+  onRender: function () {
+    $('body').append(this.el);
+    this.$el.modal({show: false});
+    this.show();
   }
 });
 
@@ -54,7 +76,11 @@ var LogInView = Marionette.ItemView.extend({
         if (response.length === 1 && response[0].username === userInfo.username && response[0].password === userInfo.password) {
           userInfo.id = response[0].id;
           userProfile.loginSuccess(userInfo);
+        } else if (response.error) {
+          alert('Incorrect username/password');
         }
+      }).fail(function () {
+        alert('Incorrect username/password');
       });
     } else {
       alert('please enter a username and/or password');

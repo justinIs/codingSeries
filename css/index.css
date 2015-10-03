@@ -8778,6 +8778,16 @@ fieldset[disabled] .btn-yahoo.active {
   text-transform: uppercase;
   transition: all 0.2s linear;
 }
+.create-account-modal {
+  width: 350px;
+}
+.create-account-modal .create-account-row {
+  text-align: center;
+}
+.create-account-modal .create-account-row .create-account-input {
+  width: 200px;
+  font-size: 18px;
+}
 .please-log-in,
 #username,
 #password {
