@@ -37,6 +37,6 @@ SCHEDULER.every '2s' do
     end
   end
 
-  send_event('leaderboard', { items: data_hash.values })
+  send_event('leaderboard', { items: user_hash.values })
 
 end
