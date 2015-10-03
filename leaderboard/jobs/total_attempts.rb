@@ -9,16 +9,8 @@ SCHEDULER.every '2s' do
   attempts = c.body_str
   attempts = JSON.parse(attempts)
 
-  points = 0
+  puts attempts.count
 
-  attempts.each do |attempt|
-    begin
-      points = points + attempt['points'].to_i
-    rescue StandardError => e
-      $stderr.puts e
-    end
-  end
-
-  send_event('total_points', { current: points })
+  send_event('total_attempts', { current: attempts.count })
 
 end
