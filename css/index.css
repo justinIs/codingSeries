@@ -8783,6 +8783,10 @@ fieldset[disabled] .btn-yahoo.active {
 #password {
   padding: 13px;
 }
+.submission-ta {
+  width: 100%;
+  height: 100px;
+}
 #username,
 #password {
   margin: 0 10px;

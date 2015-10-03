@@ -1,20 +1,20 @@
 var UserProfile = Backbone.Model.extend({
-  defaults: {
-    username: 'user'
-  },
   initialize: function () {
     var userInfo = Cookies.getJSON('userInfo');
     this.loggedIn = false;
     if (userInfo) {
       this.set('username', userInfo.username);
       this.set('password', userInfo.password);
+      this.set('id', userInfo.id);
       this.loggedIn = true;
     }
   },
   loginSuccess: function (credentials) {
-    Cookies.set('userInfo', credentials, { expires: 1, path: '/' });
     this.set('username', credentials.username);
     this.set('password', credentials.password);
+    this.set('id', 12);
+    credentials.id = 12;
+    Cookies.set('userInfo', credentials, {expires: 1, path: '/'});
     this.loggedIn = true;
     window.location.reload();
   },
@@ -34,14 +34,19 @@ var Question = Backbone.Model.extend({
     else if (this.get('points') == 9) difficulty = 'hard';
   },
   submit: function () {
-    // TODO: post submit
-    return {
-      then: function (cb) {
-        this.trigger('questionResponse', {status: 'correct'});
-
-        if (typeof cb === 'function') cb();
+    var self = this;
+    return $.post('http://codingseries.xyz/api/ndb/', {
+      user_id: userProfile.get('id'),
+      challenge_id: self.get('id'),
+      source_file: self.get('source'),
+      output_file: self.get('output')
+    }).then(function (result, status) {
+      if (status === "success") {
+        window.location.reload();
+      } else {
+        self.set('questionStatus', 'incorrect');
       }
-    }
+    });
   },
   isCorrect: function () {
     return this.model.get('questionStatus') === 'correct';
@@ -78,35 +83,37 @@ var Questions = Backbone.Collection.extend({
   }
 });
 
-var allQuestions = $.get('http://www.codingseries.xyz/api/index.php/challenges');
-var allAttempts = $.get('http://www.codingseries.xyz/api/index.php/attempts');
-//var allAttempts = $.get('http://159.203.3.189/api/index.php/attempts/user/'+userProfile.username());
-
 var easyQuestions = new Questions();
 var mediumQuestions = new Questions();
 var hardQuestions = new Questions();
+if (userProfile.isLoggedIn()) {
+  var allQuestions = $.get('http://www.codingseries.xyz/api/index.php/challenges');
+  var allAttempts = $.get('http://www.codingseries.xyz/api/index.php/attempts/user/'+userProfile.get('id'));
 
-$.when(allQuestions, allAttempts).done(function (questionsResponse, attemptsResponse) {
-  if (questionsResponse[1] === 'success' && attemptsResponse[1] === 'success' && questionsResponse[0].error === undefined) {
-    questionsResponse[0].forEach(function (rawQuestion) {
-      var question = new Question(rawQuestion);
-      if (attemptsResponse[0].error === undefined) {
-        var currentAttempt = _.find(attemptsResponse[0], function (attempt) {
-          return attempt.challenge == rawQuestion.id;
-        });
-        if (currentAttempt) {
-          question.set('questionStatus', currentAttempt.points == question.get('points') ? 'correct' : 'incorrect');
+  $.when(allQuestions, allAttempts).done(function (questionsResponse, attemptsResponse) {
+    if (questionsResponse[1] === 'success' && attemptsResponse[1] === 'success' && questionsResponse[0].error === undefined) {
+      questionsResponse[0].forEach(function (rawQuestion) {
+        var question = new Question(rawQuestion);
+        if (attemptsResponse[0].error === undefined) {
+          var thisQuestionAttempts = _.filter(attemptsResponse[0], function (attempt) {
+            return attempt.challenge == rawQuestion.id;
+          });
+          question.set('questionStatus', 'unanswered');
+          thisQuestionAttempts.forEach(function (questionAttempt) {
+            if (question.get('questionStatus') !== "correct")
+              question.set('questionStatus', questionAttempt.points == question.get('points') ? 'correct' : 'incorrect')
+          });
         } else {
           question.set('questionStatus', 'unanswered');
         }
-      }
-      if (question.get('points') == 1)
-        easyQuestions.add(question);
-      else if (question.get('points') == 3)
-        mediumQuestions.add(question);
-      else
-        hardQuestions.add(question);
-    });
-    userProfile.trigger('questions-loaded');
-  }
-});
+        if (question.get('points') == 1)
+          easyQuestions.add(question);
+        else if (question.get('points') == 3)
+          mediumQuestions.add(question);
+        else
+          hardQuestions.add(question);
+      });
+      userProfile.trigger('questions-loaded');
+    }
+  });
+}

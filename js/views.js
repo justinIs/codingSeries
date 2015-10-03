@@ -5,6 +5,9 @@ var AppView = Marionette.LayoutView.extend({
     questions: '#questions',
     leaderboard: '#leaderboard'
   },
+  initialize: function () {
+    this.listenTo(userProfile, 'questionResponse', this.render);
+  },
   onRender: function () {
     $('#application').append(this.el);
     if (userProfile.isLoggedIn()) {
@@ -39,14 +42,15 @@ var LogInView = Marionette.ItemView.extend({
     var username = this.ui.username.val(), password = this.ui.password.val();
     if ((username && username.length > 0) && (password && password.length)) {
       var userInfo = {
-        username: username,
+        username: username.trim(),
         password: password
       };
-      //$.post('http://www.codingseries.xyz/api/index.php/sessions', userInfo).then(function (response) {
-      //  if (response.status === 'success') {
+      $.get('http://codingseries.xyz/api/index.php/users/username/' + userInfo.username).then(function (response) {
+        if (response.length === 1 && response[0].username === userInfo.username && response[0].password === userInfo.password) {
+          userInfo.id = response[0].id;
           userProfile.loginSuccess(userInfo);
-      //  }
-      //});
+        }
+      });
     } else {
       alert('please enter a username and/or password');
     }
@@ -86,12 +90,14 @@ var QuestionModal = Marionette.ItemView.extend({
     fileinput: '#fileinput',
     dismissModal: '#dismissModal',
     errors: '.errors',
-    errorMessages: '#errorMessages'
+    errorMessages: '#errorMessages',
+    sourceCode: '#sourceFile',
+    outputFile: '#outputFile'
   },
   events: {
     'hidden': 'teardown',
     'click .nope': 'noped',
-    'click .submit': 'yepd',
+    'click .submit': 'submitFiles',
     'click .close': 'noped',
     'change @ui.fileinput': 'submitFiles'
   },
@@ -102,48 +108,26 @@ var QuestionModal = Marionette.ItemView.extend({
     this.ui.errorMessages.empty();
     this.ui.errors.hide();
 
-    var sourceFileRgx = /q(.*)\.[^\.out$].*/gi;
-    var files = e.target.files;
-    var outputFileRgx = /q(.*)\.out$/g;
-    var sourceFile = this.model.sourceFileSubmitted(), outputFile = this.model.outputFileSubmitted();
-    var self = this;
-    var iterateOver = files.length === 2 ? ['0', '1'] : ['0'];
-    _.forEach(iterateOver, function (index) {
-      var file = files[index];
-      var matched = sourceFileRgx.exec(file.name);
-      if (matched && !sourceFile) {
-        if (matched[1] == self.model.get('id')) {
-          sourceFile = true;
-          self.model.set('sourceFile', file);
-        } else {
-          alert('Your source file id (' + matched[1] + ') doesn\'t match the question\'s id (' + self.model.get('id')
-            + ')');
-        }
-        return;
-      }
-      matched = outputFileRgx.exec(file.name);
-      if (matched && !outputFile) {
-        if (matched[1] == self.model.get('id')) {
-          outputFile = true;
-          self.model.set('outputFile', file);
-        } else {
-          alert('Your output file id (' + matched[1] + ') doesn\'t match the question\'s id (' + self.model.get('id')
-            + ')');
-        }
-      }
-    });
-    if (!sourceFile) {
-      this.$el.find('#source-file').show();
-      this.ui.errorMessages.append('<p>You need to resubmit your source file</p>');
+    var sourceCode = this.ui.sourceCode.val();
+    var outputFile = this.ui.outputFile.val();
+
+    if (!sourceCode) {
+      this.ui.errorMessages.append('<p>Source code missing!</p>');
     }
     if (!outputFile) {
-      this.ui.errorMessages.append('<p>You need to resubmit your output file</p>');
-      this.$el.find('#output-file').show();
+      this.ui.errorMessages.append('<p>Output missing!</p>');
     }
-    if (!sourceFile || !outputFile) this.ui.errors.show();
-    else this.model.submit().then(function () {
-      self.teardown();
-    });
+    var self = this;
+    if (!sourceCode || !outputFile) {
+      this.ui.errors.show();
+      $('.modal-body').scrollTop($(document).height()*3);
+    } else {
+      this.model.set('source', sourceCode);
+      this.model.set('output', outputFile);
+      this.model.submit().then(function () {
+        self.teardown();
+      });
+    }
   },
   yepd: function () {
     this.ui.fileinput.click();
