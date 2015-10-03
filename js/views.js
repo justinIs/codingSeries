@@ -14,10 +14,15 @@ var AppView = Marionette.LayoutView.extend({
       this.showChildView('questions', new QuestionSetView());
       var $loginul = $('#loginView').find('ul');
       $loginul.empty();
+      $loginul.append('<li><a id="logout" href="#">Logout</a></li>');
       $('#userTitle').text(userProfile.username());
+      $('#logout').click(this.logout);
     } else {
       new LogInView().render();
     }
+  },
+  logout: function () {
+    userProfile.logout();
   }
 });
 
@@ -124,8 +129,10 @@ var QuestionModal = Marionette.ItemView.extend({
     } else {
       this.model.set('source', sourceCode);
       this.model.set('output', outputFile);
-      this.model.submit().then(function () {
+      this.model.submit().done(function () {
         self.teardown();
+      }).fail(function () {
+        alert("Incorrect, please try again.");
       });
     }
   },

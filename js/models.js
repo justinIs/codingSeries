@@ -12,10 +12,14 @@ var UserProfile = Backbone.Model.extend({
   loginSuccess: function (credentials) {
     this.set('username', credentials.username);
     this.set('password', credentials.password);
-    this.set('id', 12);
-    credentials.id = 12;
+    this.set('id', credentials.id);
+    credentials.id = credentials.id;
     Cookies.set('userInfo', credentials, {expires: 1, path: '/'});
     this.loggedIn = true;
+    window.location.reload();
+  },
+  logout: function () {
+    Cookies.remove('userInfo');
     window.location.reload();
   },
   isLoggedIn: function () {
@@ -43,9 +47,9 @@ var Question = Backbone.Model.extend({
     }).then(function (result, status) {
       if (status === "success") {
         window.location.reload();
-      } else {
-        self.set('questionStatus', 'incorrect');
       }
+    }).fail(function () {
+      self.set('questionStatus', 'incorrect');
     });
   },
   isCorrect: function () {
