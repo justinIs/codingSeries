@@ -9,8 +9,6 @@ SCHEDULER.every '2s' do
   attempts = c.body_str
   attempts = JSON.parse(attempts)
 
-  puts attempts.count
-
   send_event('total_attempts', { current: attempts.count })
 
 end

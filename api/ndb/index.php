@@ -25,6 +25,12 @@ $result = mysql_query("SELECT * FROM `challenges`");
 while ($row = mysql_fetch_assoc($result)) {
     $challenges[$row['id']] = $row;
 }
+//
+//if($challengeId == 26) {
+// $challenges[$challengeId]['secret_output'] = trim($challenges[$challengeId]['secret_output']);
+// $outputFile = trim($outputFile);
+//}
+//var_dump($challenges[$challengeId]['secret_output'], $outputFile);
 
 if($challenges[$challengeId]['secret_output'] == $outputFile) {
 	$points = $challenges[$challengeId]['points'];

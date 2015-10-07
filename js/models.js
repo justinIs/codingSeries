@@ -109,7 +109,16 @@ if (userProfile.isLoggedIn()) {
         } else {
           question.set('questionStatus', 'unanswered');
         }
-        if (question.get('points') == 1)
+
+	if(question.get('hidden') == 1) {
+                // nothing to do
+		question.set('title', question.get('title') + '<br /><strong>x</strong>');
+		var str = "This question isn't available yet -- try the others";
+		question.set('description', str);
+		question.set('output', str);
+		question.set('secret_input', str);
+        } 
+	if (question.get('points') == 1)
           easyQuestions.add(question);
         else if (question.get('points') == 3)
           mediumQuestions.add(question);
